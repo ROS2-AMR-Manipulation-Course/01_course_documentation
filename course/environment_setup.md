@@ -30,7 +30,7 @@ Recommended minimum:
 
 * 4-core CPU
 * 16 GB RAM
-* 50 GB available storage
+* 250 GB available storage
 * Dedicated GPU recommended for heavier Gazebo simulations
 
 More powerful hardware is recommended when running complex simulations.
