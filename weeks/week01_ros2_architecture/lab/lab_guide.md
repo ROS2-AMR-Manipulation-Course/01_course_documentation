@@ -1,999 +1,881 @@
-# Week 1 Lab Guide — ROS 2 Architecture & Communication
+# Week 1 Lab Guide
 
-## 1. Lab Overview
+## ROS 2 Communication, Python Nodes, PS4 Teleoperation and Launch Files
 
-**Course:** ROS 2 AMR & Manipulation
-**Week:** 1
-**Topic:** Linux, Middleware & ROS 2 Architecture
-**Lab Duration:** 8 hours
-**Platform:** Ubuntu 24.04 LTS
-**ROS 2:** Jazzy
+**Platform:** Ubuntu 24.04, ROS 2 Jazzy, Turtlesim
+**Estimated duration:** 8 hours
+**Main objective:** Build a small ROS 2 system step by step, starting with simple communication and finishing with PS4-controlled Turtlesim.
 
-This laboratory introduces students to the practical use of ROS 2.
+---
 
-Students will first use the ROS 2 command-line tools, then write Python ROS 2 nodes, and finally combine multiple nodes into a small robot software system.
+## 1. Laboratory Overview
 
-The laboratory follows this progression:
+In this lab, you will learn how ROS 2 nodes communicate using topics, services, actions, parameters, and launch files.
+
+You will first test existing ROS 2 tools, then create small Python programs. Finally, you will integrate the nodes into one system that uses a PS4 controller to move a turtle and publishes its status.
+
+### Final system architecture
 
 ```text
-ROS 2 CLI
-    ↓
-Nodes
-    ↓
-Topics
-    ↓
-Turtlesim
-    ↓
-Python Publisher / Subscriber
-    ↓
-Services
-    ↓
-Python Service
-    ↓
-Parameters
-    ↓
-rqt_console
-    ↓
-Launch
-    ↓
-Mini ROS 2 Robot System
+PS4 Controller
+      |
+      v
+   joy_node
+      |
+      | /joy
+      v
+turtle_ps4_teleop
+      |
+      | /turtle1/cmd_vel
+      v
+  turtlesim_node
+      |
+      | /turtle1/pose
+      v
+turtle_status_node
+      |
+      | /turtle_status
+      v
+turtle_status_monitor
+
+Additional communication:
+- Service: /reset or a custom reset service
+- Action: /turtle1/rotate_absolute
+- Visualization: rqt_graph
+- Logging: rqt_console
+- Startup: ros2 launch
 ```
 
----
+## 2. Check the ROS 2 Environment
 
-# 2. Learning Outcomes
-
-By the end of this laboratory, students should be able to:
-
-1. Create and build a ROS 2 workspace.
-2. Run and inspect ROS 2 nodes.
-3. Inspect ROS 2 topics and message types.
-4. Publish and subscribe to ROS 2 topics.
-5. Use Turtlesim to observe ROS 2 communication.
-6. Create a Python ROS 2 publisher.
-7. Create a Python ROS 2 subscriber.
-8. Understand ROS 2 services.
-9. Create a Python service server and client.
-10. Inspect and use ROS 2 parameters.
-11. Use `rqt_graph` to visualize ROS communication.
-12. Use `rqt_console` to inspect ROS log messages.
-13. Create a launch file to start multiple nodes.
-14. Debug a simple ROS 2 communication system.
-15. Explain the ROS 2 architecture of a small robot system.
-
----
-
-# 3. Laboratory Workflow
-
-```text
-Part 1   Environment & Workspace
-   ↓
-Part 2   Nodes & ROS 2 CLI
-   ↓
-Part 3   Topics
-   ↓
-Part 4   Turtlesim
-   ↓
-Part 5   Python Publisher & Subscriber
-   ↓
-Part 6   Services
-   ↓
-Part 7   Python Service
-   ↓
-Part 8   Parameters & Debugging
-   ↓
-Part 9   Launch Files
-   ↓
-Part 10  Mini ROS 2 Robot System
-```
-
----
-
-# 4. Part 1 — Check the ROS 2 Environment
-
-## 4.1 Source ROS 2
-
-Open a terminal:
+Open a terminal and source ROS 2 Jazzy.
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-```
-
-Check the ROS 2 distribution:
-
-```bash
 echo $ROS_DISTRO
+ros2 --help
 ```
 
-Expected:
+Expected distribution:
 
 ```text
 jazzy
 ```
 
-Check the ROS 2 command-line interface:
-
-```bash
-ros2 --help
-```
-
----
-
-# 5. Create a ROS 2 Workspace
-
-Create the workspace:
+Create a workspace:
 
 ```bash
 mkdir -p ~/ros2_ws/src
-```
-
-Move into the workspace:
-
-```bash
 cd ~/ros2_ws
-```
-
-Build:
-
-```bash
 colcon build
-```
-
-Source the workspace:
-
-```bash
 source install/setup.bash
 ```
 
-Check the workspace:
+If `colcon` is missing, install it:
 
 ```bash
-ros2 pkg list
+sudo apt update
+sudo apt install python3-colcon-common-extensions
 ```
 
-The workspace is now ready.
+**Checkpoint:** You can source ROS 2 Jazzy and build an empty workspace.
 
-The normal ROS 2 development workflow is:
+## 3. Start Turtlesim and Inspect the ROS Graph
 
-```text
-Write Code
-    ↓
-Build
-    ↓
-Source
-    ↓
-Run
-```
-
----
-
-# 6. Part 2 — ROS 2 Nodes
-
-ROS 2 provides example nodes that can be used to understand communication.
-
-## 6.1 Start the Talker
-
-Terminal 1:
+Open Terminal 1:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-ros2 run demo_nodes_cpp talker
-```
-
-## 6.2 Start the Listener
-
-Terminal 2:
-
-```bash
-source /opt/ros/jazzy/setup.bash
-ros2 run demo_nodes_py listener
-```
-
-The talker publishes messages and the listener receives them.
-
----
-
-# 7. Inspect ROS 2 Nodes
-
-Open another terminal.
-
-```bash
-source /opt/ros/jazzy/setup.bash
-```
-
-List nodes:
-
-```bash
-ros2 node list
-```
-
-Inspect the talker:
-
-```bash
-ros2 node info /talker
-```
-
-Students should identify:
-
-* Node name
-* Publishers
-* Subscribers
-* Services
-* Actions
-
----
-
-# 8. Part 3 — ROS 2 Topics
-
-List topics:
-
-```bash
-ros2 topic list
-```
-
-Inspect `/chatter`:
-
-```bash
-ros2 topic info /chatter
-```
-
-Find the message type:
-
-```bash
-ros2 topic type /chatter
-```
-
-Expected:
-
-```text
-std_msgs/msg/String
-```
-
-Display the message definition:
-
-```bash
-ros2 interface show std_msgs/msg/String
-```
-
-Expected:
-
-```text
-string data
-```
-
-Read messages:
-
-```bash
-ros2 topic echo /chatter
-```
-
----
-
-# 9. Publish a Topic from the CLI
-
-Create a new topic:
-
-```bash
-ros2 topic pub /my_topic std_msgs/msg/String "{data: 'Hello ROS 2'}"
-```
-
-In another terminal:
-
-```bash
-ros2 topic echo /my_topic
-```
-
-Inspect the topic:
-
-```bash
-ros2 topic info /my_topic
-```
-
-Check the publishing frequency:
-
-```bash
-ros2 topic hz /my_topic
-```
-
----
-
-# 10. Part 4 — Turtlesim
-
-Turtlesim provides a simple visual robot-like environment for learning ROS 2.
-
-## 10.1 Start Turtlesim
-
-Terminal 1:
-
-```bash
 ros2 run turtlesim turtlesim_node
 ```
 
-A turtle window should appear.
-
-## 10.2 Start Keyboard Control
-
-Terminal 2:
+Open Terminal 2:
 
 ```bash
+source /opt/ros/jazzy/setup.bash
 ros2 run turtlesim turtle_teleop_key
 ```
 
-Use the keyboard to move the turtle.
+Use the keyboard teleoperation terminal to move the turtle.
 
----
-
-# 11. Inspect the Turtlesim Topics
-
-List topics:
+In Terminal 3, inspect the graph:
 
 ```bash
+ros2 node list
 ros2 topic list
+ros2 service list
+ros2 action list
+ros2 param list /turtlesim
 ```
 
-Important topics include:
+Inspect the important topics:
 
-```text
-/turtle1/cmd_vel
-/turtle1/pose
+```bash
+ros2 topic type /turtle1/pose
+ros2 topic type /turtle1/cmd_vel
+ros2 interface show turtlesim/msg/Pose
+ros2 interface show geometry_msgs/msg/Twist
 ```
 
-Read the turtle pose:
+Monitor the turtle's position:
 
 ```bash
 ros2 topic echo /turtle1/pose
 ```
 
-The pose contains information such as:
+Stop the command with `Ctrl+C`.
 
-```text
-x
-y
-theta
-linear_velocity
-angular_velocity
-```
+**Checkpoint:** Explain which node publishes the pose and which topic receives velocity commands.
 
-The turtle's state is therefore available through a ROS 2 topic.
+## 4. Test a Publisher and Subscriber Using CLI Tools
 
----
+Before writing code, test ROS 2 communication from the terminal.
 
-# 12. Inspect `/turtle1/cmd_vel`
-
-Check the message type:
+### 4.1 Start a subscriber
 
 ```bash
-ros2 topic type /turtle1/cmd_vel
+ros2 topic echo /lab_message
 ```
 
-Expected:
+### 4.2 Publish one message
 
-```text
-geometry_msgs/msg/Twist
-```
-
-Display the message definition:
+Open another terminal:
 
 ```bash
-ros2 interface show geometry_msgs/msg/Twist
+source /opt/ros/jazzy/setup.bash
+ros2 topic pub --once /lab_message std_msgs/msg/String "{data: 'Hello ROS 2'}"
 ```
 
-The important fields are:
+The subscriber should display the message.
 
-```text
-linear.x
-angular.z
+### 4.3 Inspect the topic
+
+```bash
+ros2 topic info /lab_message
+ros2 topic type /lab_message
+ros2 interface show std_msgs/msg/String
 ```
 
-These are commonly used to control a mobile robot.
+**Checkpoint:** Explain the publisher, subscriber, topic name, and message type.
 
----
+## 5. Create a Simple Python Publisher and Subscriber
 
-# 13. Part 5 — Create a Python ROS 2 Package
-
-Create the package:
+Create a package:
 
 ```bash
 cd ~/ros2_ws/src
-
-ros2 pkg create --build-type ament_python turtlesim_python_lab
+ros2 pkg create --build-type ament_python ros2_lab_basics --dependencies rclpy std_msgs
 ```
 
-The package should contain:
+### 5.1 Create the publisher
 
-```text
-turtlesim_python_lab/
-├── package.xml
-├── setup.py
-├── setup.cfg
-└── turtlesim_python_lab/
-    └── __init__.py
+Create `ros2_lab_basics/simple_publisher.py`:
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+
+class SimplePublisher(Node):
+    def __init__(self):
+        super().__init__('simple_publisher')
+        self.publisher = self.create_publisher(
+            String, '/lab_message', 10
+        )
+        self.timer = self.create_timer(1.0, self.publish_message)
+        self.counter = 0
+
+    def publish_message(self):
+        msg = String()
+        msg.data = f'Hello ROS 2: {self.counter}'
+        self.publisher.publish(msg)
+        self.get_logger().info(f'Published: {msg.data}')
+        self.counter += 1
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SimplePublisher()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
 ```
 
-We will add:
+### 5.2 Create the subscriber
 
-```text
-turtle_pose_subscriber.py
-turtle_cmd_publisher.py
+Create `ros2_lab_basics/simple_subscriber.py`:
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+
+class SimpleSubscriber(Node):
+    def __init__(self):
+        super().__init__('simple_subscriber')
+        self.subscription = self.create_subscription(
+            String, '/lab_message', self.message_callback, 10
+        )
+
+    def message_callback(self, msg):
+        self.get_logger().info(f'Received: {msg.data}')
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SimpleSubscriber()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
 ```
 
----
+### 5.3 Register the commands
 
-# 14. Python Subscriber
+Edit `setup.py`. Add these entries to the existing `entry_points` configuration:
 
-Create:
-
-```text
-turtle_pose_subscriber.py
+```python
+entry_points={
+    'console_scripts': [
+        'simple_publisher = ros2_lab_basics.simple_publisher:main',
+        'simple_subscriber = ros2_lab_basics.simple_subscriber:main',
+    ],
+},
 ```
 
-The node subscribes to:
+Keep the other existing `setup.py` configuration, including the package's `data_files`.
 
-```text
-/turtle1/pose
-```
-
-Message type:
-
-```text
-turtlesim/msg/Pose
-```
-
-The subscriber should display information similar to:
-
-```text
-Turtle Position
-x: 5.54
-y: 5.54
-theta: 0.00
-```
-
-Move the turtle with the keyboard and observe how the values change.
-
-The communication is:
-
-```text
-turtlesim
-    │
-    │ /turtle1/pose
-    ▼
-Python Subscriber
-```
-
----
-
-# 15. Python Publisher
-
-Create:
-
-```text
-turtle_cmd_publisher.py
-```
-
-The node publishes:
-
-```text
-/turtle1/cmd_vel
-```
-
-using:
-
-```text
-geometry_msgs/msg/Twist
-```
-
-The publisher should command the turtle to move.
-
-The communication becomes:
-
-```text
-Python Publisher
-       │
-       │ /turtle1/cmd_vel
-       ▼
-    turtlesim
-       │
-       │ /turtle1/pose
-       ▼
-Python Subscriber
-```
-
-This demonstrates a complete ROS 2 communication loop.
-
----
-
-# 16. Build the Python Package
-
-From the workspace:
+### 5.4 Build and test
 
 ```bash
 cd ~/ros2_ws
+colcon build --packages-select ros2_lab_basics
+source install/setup.bash
+```
+
+Terminal 1:
+
+```bash
+ros2 run ros2_lab_basics simple_subscriber
+```
+
+Terminal 2:
+
+```bash
+ros2 run ros2_lab_basics simple_publisher
+```
+
+**Checkpoint:** Both nodes run and messages arrive every second.
+
+## 6. Test Services
+
+ROS 2 services use request/response communication.
+
+### 6.1 Inspect Turtlesim services
+
+Start Turtlesim if it is not already running.
+
+```bash
+ros2 service list
+ros2 service type /reset
+ros2 service type /clear
+ros2 service type /turtle1/set_pen
+```
+
+Inspect service definitions:
+
+```bash
+ros2 interface show std_srvs/srv/Empty
+ros2 interface show turtlesim/srv/SetPen
+```
+
+### 6.2 Call a built-in service
+
+Reset the turtle:
+
+```bash
+ros2 service call /reset std_srvs/srv/Empty "{}"
+```
+
+Clear the drawing:
+
+```bash
+ros2 service call /clear std_srvs/srv/Empty "{}"
+```
+
+Change the turtle pen:
+
+```bash
+ros2 service call /turtle1/set_pen turtlesim/srv/SetPen "{r: 255, g: 0, b: 0, width: 3, off: 0}"
+```
+
+**Checkpoint:** Explain why a service is suitable for requesting a reset.
+
+## 7. Create a Python Service Server and Client
+
+Create another package:
+
+```bash
+cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python ros2_lab_services --dependencies rclpy example_interfaces
+```
+
+### 7.1 Create the service server
+
+Create `ros2_lab_services/add_two_ints_server.py`:
+
+```python
+import rclpy
+from rclpy.node import Node
+from example_interfaces.srv import AddTwoInts
+
+
+class AddTwoIntsServer(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_server')
+        self.server = self.create_service(
+            AddTwoInts, '/add_two_ints', self.add_callback
+        )
+
+    def add_callback(self, request, response):
+        response.sum = request.a + request.b
+        self.get_logger().info(
+            f'{request.a} + {request.b} = {response.sum}'
+        )
+        return response
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = AddTwoIntsServer()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+### 7.2 Create the service client
+
+Create `ros2_lab_services/add_two_ints_client.py`:
+
+```python
+import rclpy
+from rclpy.node import Node
+from example_interfaces.srv import AddTwoInts
+
+
+class AddTwoIntsClient(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_client')
+        self.client = self.create_client(AddTwoInts, '/add_two_ints')
+
+    def send_request(self, a, b):
+        while not self.client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Waiting for service...')
+
+        request = AddTwoInts.Request()
+        request.a = a
+        request.b = b
+        future = self.client.call_async(request)
+        rclpy.spin_until_future_complete(self, future)
+
+        if future.result() is not None:
+            self.get_logger().info(f'Result: {future.result().sum}')
+        else:
+            self.get_logger().error('Service call failed')
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = AddTwoIntsClient()
+    try:
+        node.send_request(10, 20)
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+Register both executables in `setup.py`:
+
+```python
+entry_points={
+    'console_scripts': [
+        'add_two_ints_server = ros2_lab_services.add_two_ints_server:main',
+        'add_two_ints_client = ros2_lab_services.add_two_ints_client:main',
+    ],
+},
 ```
 
 Build:
 
 ```bash
-colcon build --packages-select turtlesim_python_lab
-```
-
-Source:
-
-```bash
+cd ~/ros2_ws
+colcon build --packages-select ros2_lab_services
 source install/setup.bash
 ```
 
-Run the publisher:
+Run the server in Terminal 1:
 
 ```bash
-ros2 run turtlesim_python_lab turtle_cmd_publisher
+ros2 run ros2_lab_services add_two_ints_server
 ```
 
-Run the subscriber:
+Run the client in Terminal 2:
 
 ```bash
-ros2 run turtlesim_python_lab turtle_pose_subscriber
+ros2 run ros2_lab_services add_two_ints_client
 ```
 
----
+Expected result:
 
-# 17. Inspect the Python ROS System
+```text
+Result: 30
+```
 
-Check nodes:
+**Checkpoint:** The client sends two numbers and receives their sum from the server.
+
+## 8. Inspect and Test an Action
+
+Actions are suitable for longer tasks that may provide feedback or be cancelled.
+
+Turtlesim provides `/turtle1/rotate_absolute`.
+
+Inspect it:
 
 ```bash
-ros2 node list
+ros2 action list
+ros2 action info /turtle1/rotate_absolute
+ros2 action send_goal --help
 ```
 
-Check topics:
+Inspect the action type:
+
+```bash
+ros2 action list -t
+```
+
+Use the action type shown by the command in the next step. For the standard Turtlesim action, it is `turtlesim/action/RotateAbsolute`.
+
+```bash
+ros2 interface show turtlesim/action/RotateAbsolute
+```
+
+Send a goal:
+
+```bash
+ros2 action send_goal /turtle1/rotate_absolute turtlesim/action/RotateAbsolute "{theta: 1.57}" --feedback
+```
+
+Try another angle, then observe the turtle's orientation.
+
+**Checkpoint:** Identify the goal, feedback, and result in the action interface.
+
+## 9. Read PS4 Controller Input with `joy_node`
+
+Install the relevant packages:
+
+```bash
+sudo apt update
+sudo apt install ros-jazzy-joy
+```
+
+Connect your PS4 controller through USB or Bluetooth. Confirm that Ubuntu can detect it before continuing.
+
+Start the joystick node:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 run joy joy_node
+```
+
+In another terminal:
 
 ```bash
 ros2 topic list
+ros2 topic info /joy
+ros2 topic echo /joy
 ```
 
-Inspect:
+Move each stick and press each button. Observe changes to the `axes` and `buttons` arrays.
+
+**Do not assume the axis indexes.** Record the indexes for forward/backward movement and turning from your own controller output. Controller mappings can vary.
+
+If `/joy` is missing, check the controller connection and `joy_node` terminal output first.
+
+**Checkpoint:** You can identify the relevant axes and a button from actual `/joy` messages.
+
+## 10. Create the PS4-to-Turtlesim Teleoperation Node
+
+Create a package:
 
 ```bash
-ros2 topic info /turtle1/cmd_vel
+cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python turtle_ps4_lab --dependencies rclpy sensor_msgs geometry_msgs std_msgs turtlesim
 ```
 
-and:
+Create `turtle_ps4_lab/turtle_ps4_teleop.py`:
 
-```bash
-ros2 topic info /turtle1/pose
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Joy
+from geometry_msgs.msg import Twist
+
+
+class TurtlePS4Teleop(Node):
+    def __init__(self):
+        super().__init__('turtle_ps4_teleop')
+
+        # Update these indexes after inspecting your own /joy output.
+        self.declare_parameter('linear_axis', 1)
+        self.declare_parameter('angular_axis', 0)
+        self.declare_parameter('linear_scale', 2.0)
+        self.declare_parameter('angular_scale', 2.0)
+
+        self.linear_axis = self.get_parameter('linear_axis').value
+        self.angular_axis = self.get_parameter('angular_axis').value
+        self.linear_scale = self.get_parameter('linear_scale').value
+        self.angular_scale = self.get_parameter('angular_scale').value
+
+        self.publisher = self.create_publisher(
+            Twist, '/turtle1/cmd_vel', 10
+        )
+        self.subscription = self.create_subscription(
+            Joy, '/joy', self.joy_callback, 10
+        )
+
+        self.get_logger().info('PS4 teleoperation node started')
+
+    def joy_callback(self, msg):
+        if max(self.linear_axis, self.angular_axis) >= len(msg.axes):
+            self.get_logger().error('Configured axis index is out of range')
+            return
+
+        cmd = Twist()
+        cmd.linear.x = float(msg.axes[self.linear_axis]) * self.linear_scale
+        cmd.angular.z = float(msg.axes[self.angular_axis]) * self.angular_scale
+
+        self.publisher.publish(cmd)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TurtlePS4Teleop()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Stop the turtle when the teleoperation node shuts down.
+        node.publisher.publish(Twist())
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
 ```
 
-Visualize the graph:
+Register this executable in `setup.py`:
 
-```bash
-rqt_graph
+```python
+entry_points={
+    'console_scripts': [
+        'turtle_ps4_teleop = turtle_ps4_lab.turtle_ps4_teleop:main',
+    ],
+},
 ```
 
-Students should identify:
-
-```text
-Python Publisher
-       │
-       ▼
-/turtle1/cmd_vel
-       │
-       ▼
-turtlesim
-       │
-       ▼
-/turtle1/pose
-       │
-       ▼
-Python Subscriber
-```
-
----
-
-# 18. Part 6 — ROS 2 Services
-
-List services:
-
-```bash
-ros2 service list
-```
-
-Inspect a service:
-
-```bash
-ros2 service type <service_name>
-```
-
-Display the interface:
-
-```bash
-ros2 interface show <service_type>
-```
-
-Explain the service model:
-
-```text
-Client
-   │
-   │ Request
-   ▼
-Service Server
-   │
-   │ Response
-   ▼
-Client
-```
-
-Compare it with a topic:
-
-```text
-Topic:
-Publisher → Topic → Subscriber
-
-Service:
-Client → Server → Response
-```
-
----
-
-# 19. Part 7 — Python Service
-
-Create a Python service server and client in the same package.
-
-Students should implement a simple service such as:
-
-```text
-/add_two_ints
-```
-
-The request contains:
-
-```text
-a
-b
-```
-
-The response contains:
-
-```text
-sum
-```
-
-The architecture is:
-
-```text
-Python Client
-     │
-     │ a=10, b=20
-     ▼
-/add_two_ints
-     │
-     ▼
-Python Service Server
-     │
-     │ sum=30
-     ▼
-Python Client
-```
-
-Build:
+Build and source:
 
 ```bash
 cd ~/ros2_ws
-
-colcon build --packages-select turtlesim_python_lab
-
+colcon build --packages-select turtle_ps4_lab
 source install/setup.bash
 ```
 
-Run the server and client in separate terminals.
-
-Inspect:
+Run the nodes in separate terminals:
 
 ```bash
-ros2 service list
+ros2 run turtlesim turtlesim_node
+ros2 run joy joy_node
+ros2 run turtle_ps4_lab turtle_ps4_teleop
 ```
 
----
+Move the stick and observe the turtle. If the directions are wrong, adjust `linear_axis`, `angular_axis`, or their scales.
 
-# 20. Part 8 — Parameters
+For example, if your forward/backward axis is index `1` and your turning axis is index `0`, the defaults may work. If not, use the indexes you recorded in Section 9.
 
-List parameters:
+**Safety note:** This controls a simulated turtle, but test one axis at a time and keep the controller centered before changing mappings. A dead-man button and explicit zero-velocity handling are good improvements for a later exercise.
+
+## 11. Publish Turtle Status
+
+The Turtlesim node publishes `/turtle1/pose`. Create a status node that subscribes to the pose and publishes a human-readable status string.
+
+Create `turtle_ps4_lab/turtle_status_node.py`:
+
+```python
+import rclpy
+from rclpy.node import Node
+from turtlesim.msg import Pose
+from std_msgs.msg import String
+
+
+class TurtleStatusNode(Node):
+    def __init__(self):
+        super().__init__('turtle_status_node')
+
+        self.publisher = self.create_publisher(
+            String, '/turtle_status', 10
+        )
+        self.subscription = self.create_subscription(
+            Pose, '/turtle1/pose', self.pose_callback, 10
+        )
+
+    def pose_callback(self, pose):
+        msg = String()
+        msg.data = (
+            f'x={pose.x:.2f}, y={pose.y:.2f}, '
+            f'theta={pose.theta:.2f}, '
+            f'linear_velocity={pose.linear_velocity:.2f}, '
+            f'angular_velocity={pose.angular_velocity:.2f}'
+        )
+        self.publisher.publish(msg)
+        self.get_logger().info(msg.data)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TurtleStatusNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+Add another console entry:
+
+```python
+'turtle_status_node = turtle_ps4_lab.turtle_status_node:main',
+```
+
+Rebuild:
 
 ```bash
-ros2 param list
+cd ~/ros2_ws
+colcon build --packages-select turtle_ps4_lab
+source install/setup.bash
 ```
 
-Inspect a node:
+Run the status node:
 
 ```bash
-ros2 param list <node_name>
+ros2 run turtle_ps4_lab turtle_status_node
 ```
 
-Read a parameter:
+Observe its output:
 
 ```bash
-ros2 param get <node_name> <parameter_name>
+ros2 topic echo /turtle_status
+ros2 topic info /turtle_status
 ```
 
-Discuss possible mobile robot parameters:
+**Checkpoint:** The status updates as the turtle moves.
 
-```text
-robot_radius
-max_velocity
-use_sim_time
-```
-
-Parameters configure node behavior.
-
----
-
-# 21. Part 9 — ROS 2 Graph
+## 12. Add Logging and Inspect the Graph
 
 Run:
 
 ```bash
-rqt_graph
+ros2 run rqt_graph rqt_graph
 ```
 
-Use it to answer:
+If necessary, install the tool:
 
-* What nodes are running?
-* Which topics connect them?
-* Which node publishes?
-* Which node subscribes?
+```bash
+sudo apt install ros-jazzy-rqt-graph
+```
 
-Students should use `rqt_graph` throughout the lab rather than only at the end.
-
----
-
-# 22. Part 10 — rqt_console
-
-Start:
+Open the logging tool:
 
 ```bash
 ros2 run rqt_console rqt_console
 ```
 
-Use `rqt_console` to observe ROS log messages.
+If needed, install it:
 
-Students should understand the difference between:
-
-```text
-INFO
-WARN
-ERROR
-DEBUG
+```bash
+sudo apt install ros-jazzy-rqt-console
 ```
 
-The basic relationship is:
+Observe messages from the Python nodes. The teleoperation and status nodes use `get_logger().info(...)`, so they should generate messages for the ROS logging system.
 
-```text
-ROS 2 Node
-    │
-    ├── INFO
-    ├── WARN
-    ├── ERROR
-    └── DEBUG
-          ↓
-     rqt_console
-```
-
-Use this tool when debugging a ROS 2 system.
-
----
-
-# 23. Debugging Workflow
-
-When a ROS 2 system does not work, do not guess.
-
-Use:
-
-```text
-1. Check nodes
-       ↓
-2. Check topics
-       ↓
-3. Check topic type
-       ↓
-4. Check publisher/subscriber
-       ↓
-5. Echo the topic
-       ↓
-6. Check ROS graph
-       ↓
-7. Check logs
-```
-
-Useful commands:
+Useful inspection commands:
 
 ```bash
 ros2 node list
 ros2 topic list
-ros2 topic info <topic>
-ros2 topic type <topic>
-ros2 topic echo <topic>
-rqt_graph
-ros2 run rqt_console rqt_console
+ros2 topic info /joy
+ros2 topic info /turtle1/cmd_vel
+ros2 topic info /turtle1/pose
+ros2 topic info /turtle_status
 ```
 
----
+## 13. Create a Launch File
 
-# 24. Part 11 — Launch Multiple Nodes
+The goal is to start the Turtlesim application, joystick node, teleoperation node, and status node from one command.
 
-Instead of starting every node separately:
-
-```bash
-ros2 run ...
-ros2 run ...
-ros2 run ...
-```
-
-we can use a launch file.
-
-Create:
+Inside `turtle_ps4_lab`, create:
 
 ```text
+turtle_ps4_lab/
+├── __init__.py
+├── turtle_ps4_teleop.py
+└── turtle_status_node.py
+
 launch/
 └── turtle_system.launch.py
 ```
 
-The launch file should start:
+Create `launch/turtle_system.launch.py`:
 
-```text
-turtlesim
-Python publisher
-Python subscriber
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='turtlesim',
+            executable='turtlesim_node',
+            name='turtlesim',
+            output='screen',
+        ),
+        Node(
+            package='joy',
+            executable='joy_node',
+            name='joy_node',
+            output='screen',
+        ),
+        Node(
+            package='turtle_ps4_lab',
+            executable='turtle_ps4_teleop',
+            name='turtle_ps4_teleop',
+            output='screen',
+            parameters=[{
+                'linear_axis': 1,
+                'angular_axis': 0,
+                'linear_scale': 2.0,
+                'angular_scale': 2.0,
+            }],
+        ),
+        Node(
+            package='turtle_ps4_lab',
+            executable='turtle_status_node',
+            name='turtle_status_node',
+            output='screen',
+        ),
+    ])
 ```
 
-Run:
+**Important:** The axis indexes in this launch file are examples. Replace them with the indexes you discovered for your controller.
+
+### Install the launch file
+
+In `setup.py`, make sure the launch file is installed. Add `import os` and `from glob import glob` if they are not already present, then include this entry in `data_files`:
+
+```python
+(
+    os.path.join('share', package_name, 'launch'),
+    glob('launch/*.launch.py'),
+),
+```
+
+Keep the package's existing `data_files` entries, including its resource marker and `package.xml`.
+
+Make sure `package.xml` includes runtime dependencies for `launch`, `launch_ros`, `joy`, and `turtlesim` as appropriate for your package. The Python package creation command already adds the dependencies you supplied; add any missing launch dependencies.
+
+Rebuild and source:
 
 ```bash
-ros2 launch turtlesim_python_lab turtle_system.launch.py
+cd ~/ros2_ws
+colcon build --packages-select turtle_ps4_lab
+source install/setup.bash
 ```
 
-Then verify:
+Start the complete system:
 
 ```bash
-ros2 node list
+ros2 launch turtle_ps4_lab turtle_system.launch.py
 ```
 
-and:
-
-```bash
-rqt_graph
-```
-
-The goal is to understand:
-
-```text
-ros2 run
-    ↓
-Start one executable
-
-ros2 launch
-    ↓
-Start a complete system
-```
-
----
-
-# 25. Part 12 — Mini ROS 2 Robot System
-
-Students combine the concepts from the laboratory.
-
-The final system should contain:
-
-```text
-                   ┌─────────────────────┐
-                   │ Robot Status Node   │
-                   │ Python Publisher    │
-                   └──────────┬──────────┘
-                              │
-                       /robot_status
-                              │
-                              ▼
-                   ┌─────────────────────┐
-                   │ Status Monitor      │
-                   │ Python Subscriber   │
-                   └─────────────────────┘
-
-                   ┌─────────────────────┐
-                   │ Reset Service       │
-                   │ Python Server       │
-                   └──────────┬──────────┘
-                              │
-                         /reset_robot
-                              │
-                              ▼
-                        Python Client
-```
-
-The complete system should be started using a launch file.
-
-Students should demonstrate:
+Verify:
 
 ```bash
 ros2 node list
 ros2 topic list
-ros2 service list
-ros2 param list
-rqt_graph
-rqt_console
+ros2 topic echo /turtle_status
 ```
 
----
+Use `rqt_graph` to inspect the integrated system.
 
-# 26. Connection to Trailobot
+**Checkpoint:** One launch command starts all four nodes, and the PS4 controller moves the turtle while `/turtle_status` updates.
 
-Students should now connect the concepts they learned with the course AMR.
+## 14. Troubleshooting
 
-Example:
+| Problem                             | What to check                                         |
+| ----------------------------------- | ----------------------------------------------------- |
+| `ROS_DISTRO` is empty               | Source `/opt/ros/jazzy/setup.bash`                    |
+| Package command not found           | Rebuild the workspace and source `install/setup.bash` |
+| `/joy` does not appear              | Check the controller connection and `joy_node` output |
+| Turtle does not move                | Inspect `/joy`, then inspect `/turtle1/cmd_vel`       |
+| Turtle moves in the wrong direction | Verify axis indexes and signs                         |
+| Status topic is missing             | Check the status node and `/turtle1/pose`             |
+| Launch file cannot be found         | Check `setup.py` launch installation and rebuild      |
+| `rqt_console` is empty              | Confirm the nodes are running and publishing logs     |
 
-```text
-Trailobot
-│
-├── LiDAR
-│      ↓
-│    /scan
-│
-├── IMU
-│      ↓
-│    /imu/data
-│
-├── Odometry
-│      ↓
-│    /odom
-│
-├── Navigation
-│      ↓
-│    /cmd_vel
-│
-└── Motor Controller
-```
+## 15. Final Checklist
 
-The concepts learned in this laboratory will be used directly in:
-
-**Week 2:** URDF/Xacro, TF2, Gazebo
-
-**Week 3:** SLAM, localization, Nav2
-
-**Week 4:** Manipulation and MoveIt 2
-
----
-
-# 27. Final Laboratory Check
-
-Before finishing the laboratory, students should be able to demonstrate:
-
-* ROS 2 workspace
-* ROS 2 nodes
-* ROS 2 topics
-* Topic message types
-* Publisher/subscriber
-* Turtlesim
-* Python publisher
-* Python subscriber
-* ROS 2 service
-* Python service
-* Parameters
-* `rqt_graph`
-* `rqt_console`
-* Launch file
-* Mini ROS 2 system
-
-The main learning model is:
-
-```text
-Node
- ↓
-Communication Interface
- ↓
-Topic / Service / Action
- ↓
-Message
- ↓
-Another Node
- ↓
-ROS Graph
- ↓
-Robot System
-```
+* [ ] I can inspect nodes, topics, services, actions, and parameters.
+* [ ] I tested a CLI publisher and subscriber.
+* [ ] I wrote a Python publisher and subscriber.
+* [ ] I called a built-in Turtlesim service.
+* [ ] I created and tested a Python service server and client.
+* [ ] I inspected and called the Turtlesim rotate action.
+* [ ] I read PS4 messages from `/joy`.
+* [ ] I controlled the turtle through my Python teleoperation node.
+* [ ] I published turtle information on `/turtle_status`.
+* [ ] I inspected the system with `rqt_graph` and `rqt_console`.
+* [ ] I launched the complete system with one command.
