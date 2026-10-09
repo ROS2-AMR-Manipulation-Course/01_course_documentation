@@ -212,7 +212,7 @@ ros2 service call /clear std_srvs/srv/Empty "{}"
 ### Step 4: Change the pen color
 
 ```bash
-ros2 service call /turtle1/set_pen turtlesim/srv/SetPen "{r: 255, g: 0, b: 0, width: 3, off: 0}"
+ros2 service call /turtle1/set_pen turtlesim/srv/SetPen "{r: 255, g: 0, b: 0, width: 3, 'off': 0}"
 ```
 
 ### Step 5: Answer
@@ -278,11 +278,11 @@ Run the server in one terminal and the client in another.
 
 Test these pairs:
 
-|  A |  B | Expected sum |
-| -: | -: | -----------: |
-| 10 | 20 |           30 |
-|  5 |  7 |           12 |
-| -3 |  8 |            5 |
+|  A |  B |
+| -: | -: | 
+| 10 | 20 |          
+|  5 |  7 |           
+| -3 |  8 |        
 
 **Checkpoint:** All three requests return the correct result.
 
