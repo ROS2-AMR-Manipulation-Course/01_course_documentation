@@ -15,23 +15,6 @@ This laboratory introduces the basic ROS 2 development workflow. You start with 
 
 The objective is not only to run commands, but to understand **how ROS 2 components communicate** and how to **inspect and debug** a running system.
 
-### What you will build
-
-```text
-PS4 Controller
-      |
-      v
-   joy_node ──/joy──> turtle_ps4_teleop ──/turtle1/cmd_vel──> turtlesim_node
-                                                                    |
-                                                             /turtle1/pose
-                                                                    v
-                                     /turtle_status <── turtle_status_node
-
-All four nodes start with one command:  ros2 launch turtle_ps4_lab turtle_system.launch.py
-```
-
----
-
 ## 2. Learning Outcomes
 
 By the end of this lab, students should be able to:
