@@ -9,6 +9,19 @@ A four-week, hands-on course on **ROS 2**, **Autonomous Mobile Robots (AMRs)**, 
 | **Robots** | Trailobot AMR · ABB IRB 1200 · RB3-1200 |
 | **Audience** | Engineering students with basic Linux, Python, and mathematics; no prior ROS experience needed |
 
+<table>
+  <tr>
+    <td align="center" width="40%"><a href="01_course_documentation/course/robot_platforms/trailobot_amr.md"><img src="assets/images/robots/trailobot_isometric.jpg" alt="Trailobot autonomous mobile robot" width="320"></a></td>
+    <td align="center" width="30%"><a href="01_course_documentation/course/robot_platforms/abb_irb1200_manipulator.md"><img src="assets/images/robots/abb_irb1200.png" alt="ABB IRB 1200 industrial manipulator" height="200"></a></td>
+    <td align="center" width="30%"><a href="01_course_documentation/course/robot_platforms/rb3_1200_manipulator.md"><img src="assets/images/robots/rb3_1200.png" alt="Rainbow Robotics RB3-1200 collaborative manipulator" height="200"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Trailobot AMR</b><br>Weeks 1–3 · mobile robotics, SLAM, Nav2</td>
+    <td align="center"><b>ABB IRB 1200</b><br>Weeks 2 &amp; 4 · industrial manipulator</td>
+    <td align="center"><b>RB3-1200</b><br>Week 4 · collaborative manipulator</td>
+  </tr>
+</table>
+
 ---
 
 ## Four-Week Roadmap
@@ -72,4 +85,4 @@ Commands and files are marked as tested only where they were actually run. The W
 
 ## License and Contributing
 
-The course documentation is licensed under [CC BY 4.0](LICENSE). External robot repositories keep their own licenses. To report a problem or suggest an improvement, see [CONTRIBUTING.md](CONTRIBUTING.md).
+The course documentation is licensed under [CC BY 4.0](LICENSE). External robot repositories keep their own licenses. Robot photos and renderings in [`assets/images/`](assets/images/README.md) are **not** covered by CC BY 4.0; see the image credits there. To report a problem or suggest an improvement, see [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -2,6 +2,11 @@
 
 **Navigation:** [Robot Platforms](README.md) · [Trailobot](trailobot_amr.md) · **ABB IRB 1200** · [RB3-1200](rb3_1200_manipulator.md) · [Simulation guide](../../../02_robot_simulation/abb_irb1200/README.md)
 
+<p align="center">
+  <img src="../../../assets/images/robots/abb_irb1200.png" alt="ABB IRB 1200 industrial manipulator" height="280">
+  <br><sub>ABB IRB 1200 — 6-axis industrial manipulator</sub>
+</p>
+
 > **Robot description source:** IFRA-Cranfield, *ROS 2 Sim-to-Real Robot Control* — [github.com/IFRA-Cranfield/ros2_SimRealRobotControl](https://github.com/IFRA-Cranfield/ros2_SimRealRobotControl), branch **`jazzy`**
 > **Inspected version:** commit `b8fa70d` (September 2026) · **License:** Apache-2.0
 > The robot description is in the package **`ros2srrc_robots`** (folder `ros2srrc_robots/irb1200/`) inside that repository. There is no separate public repository named `ros2srrc_robots`.

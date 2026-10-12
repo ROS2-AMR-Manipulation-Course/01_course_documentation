@@ -2,6 +2,11 @@
 
 **Navigation:** [Robot Platforms](README.md) · [Trailobot](trailobot_amr.md) · [ABB IRB 1200](abb_irb1200_manipulator.md) · **RB3-1200** · [Simulation guide](../../../02_robot_simulation/rb3_1200/README.md)
 
+<p align="center">
+  <img src="../../../assets/images/robots/rb3_1200.png" alt="Rainbow Robotics RB3-1200 collaborative manipulator" height="300">
+  <br><sub>RB3-1200 — Rainbow Robotics RB-series collaborative manipulator</sub>
+</p>
+
 > **Status:** ⚠️ **Robot-specific details are not yet documented.** No RB3-1200 robot description, ROS 2 package, or project files were available when this page was written. This page contains only verified information and lists what is still needed.
 
 ---

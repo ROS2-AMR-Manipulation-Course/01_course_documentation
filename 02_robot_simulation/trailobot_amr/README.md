@@ -2,6 +2,11 @@
 
 **Navigation:** [Robot Simulation](../README.md) · **Trailobot** · [ABB IRB 1200](../abb_irb1200/README.md) · [RB3-1200](../rb3_1200/README.md) · [Trailobot platform page](../../01_course_documentation/course/robot_platforms/trailobot_amr.md)
 
+<p align="center">
+  <img src="../../assets/images/robots/trailobot_isometric.jpg" alt="Trailobot AMR, three-quarter view" height="200">
+  <br><sub>Trailobot AMR</sub>
+</p>
+
 > **Implementation repository:** [github.com/boyloy21/Trailobot_Simulation](https://github.com/boyloy21/Trailobot_Simulation) (branch `main`, inspected at commit `54dcda2`)
 > **Repository target:** ROS 2 Humble + Gazebo Fortress · **Course target:** ROS 2 Jazzy + Gazebo Harmonic
 

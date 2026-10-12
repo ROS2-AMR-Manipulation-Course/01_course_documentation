@@ -2,6 +2,11 @@
 
 **Navigation:** [Robot Simulation](../README.md) · [Trailobot](../trailobot_amr/README.md) · **ABB IRB 1200** · [RB3-1200](../rb3_1200/README.md) · [IRB 1200 platform page](../../01_course_documentation/course/robot_platforms/abb_irb1200_manipulator.md)
 
+<p align="center">
+  <img src="../../assets/images/robots/abb_irb1200.png" alt="ABB IRB 1200 industrial manipulator" height="240">
+  <br><sub>ABB IRB 1200</sub>
+</p>
+
 > **Implementation repository:** [IFRA-Cranfield/ros2_SimRealRobotControl](https://github.com/IFRA-Cranfield/ros2_SimRealRobotControl), branch **`jazzy`** (inspected at commit `b8fa70d`), Apache-2.0
 > Robot description: package `ros2srrc_robots`, folder [`ros2srrc_robots/irb1200`](https://github.com/IFRA-Cranfield/ros2_SimRealRobotControl/tree/jazzy/ros2srrc_robots/irb1200)
 

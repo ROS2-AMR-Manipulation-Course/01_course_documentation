@@ -8,6 +8,15 @@
 
 **Navigation:** [Course README](../../README.md) · **Week 4 README** · [Lecture](lecture/README.md) · [Lab (planned)](lab/README.md) · [Previous: Week 3](../week03_slam_navigation/README.md)
 
+<table>
+  <tr>
+    <td align="center"><img src="../../../../assets/images/robots/abb_irb1200.png" alt="ABB IRB 1200 industrial manipulator" height="220"></td>
+    <td align="center"><img src="../../../../assets/images/robots/rb3_1200.png" alt="Rainbow Robotics RB3-1200 collaborative manipulator" height="220"></td>
+  </tr>
+</table>
+
+<p align="center"><sub>ABB IRB 1200 (industrial) · RB3-1200 (collaborative)</sub></p>
+
 ---
 
 ## 1. Overview

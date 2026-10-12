@@ -7,6 +7,11 @@
 
 **Navigation:** [Course README](../../README.md) · **Week 2 README** · [Lecture](lecture/README.md) · [Lab](lab/README.md) · [Previous: Week 1](../week01_ros2_architecture/README.md) · [Next: Week 3](../week03_slam_navigation/README.md)
 
+<p align="center">
+  <img src="../../../../assets/images/robots/trailobot_side.jpg" alt="Trailobot AMR, side view" height="160">
+  <br><sub>Trailobot — the lab robot <code>diffbot</code> has the same structure: two drive wheels, casters, chassis, and LiDAR</sub>
+</p>
+
 ---
 
 ## 1. Overview

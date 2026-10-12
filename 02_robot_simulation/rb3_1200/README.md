@@ -2,6 +2,11 @@
 
 **Navigation:** [Robot Simulation](../README.md) · [Trailobot](../trailobot_amr/README.md) · [ABB IRB 1200](../abb_irb1200/README.md) · **RB3-1200** · [RB3-1200 platform page](../../01_course_documentation/course/robot_platforms/rb3_1200_manipulator.md)
 
+<p align="center">
+  <img src="../../assets/images/robots/rb3_1200.png" alt="Rainbow Robotics RB3-1200 collaborative manipulator" height="240">
+  <br><sub>RB3-1200</sub>
+</p>
+
 > **Status:** ⚠️ **Not yet available.** No RB3-1200 robot description, ROS 2 package, or simulation configuration has been supplied to the course repository yet.
 
 ---

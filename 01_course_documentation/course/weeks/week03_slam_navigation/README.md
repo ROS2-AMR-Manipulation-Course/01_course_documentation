@@ -8,6 +8,11 @@
 
 **Navigation:** [Course README](../../README.md) · **Week 3 README** · [Lecture](lecture/README.md) · [Lab (planned)](lab/README.md) · [Previous: Week 2](../week02_kinematics_simulation/README.md) · [Next: Week 4](../week04_manipulator_motion_planning/README.md)
 
+<p align="center">
+  <img src="../../../../assets/images/robots/trailobot_isometric.jpg" alt="Trailobot AMR, three-quarter view" height="200">
+  <br><sub>Trailobot — the Week 3 AMR platform</sub>
+</p>
+
 ---
 
 ## 1. Overview

@@ -2,6 +2,16 @@
 
 **Navigation:** [Robot Platforms](README.md) · **Trailobot** · [ABB IRB 1200](abb_irb1200_manipulator.md) · [RB3-1200](rb3_1200_manipulator.md) · [Simulation guide](../../../02_robot_simulation/trailobot_amr/README.md)
 
+<table>
+  <tr>
+    <td align="center"><img src="../../../assets/images/robots/trailobot_front.jpg" alt="Trailobot AMR, front view" height="150"></td>
+    <td align="center"><img src="../../../assets/images/robots/trailobot_isometric.jpg" alt="Trailobot AMR, three-quarter view" height="150"></td>
+    <td align="center"><img src="../../../assets/images/robots/trailobot_side.jpg" alt="Trailobot AMR, side view" height="150"></td>
+  </tr>
+</table>
+
+<p align="center"><sub>Trailobot AMR — front, three-quarter, and side views (AI Farm Robotics Factory)</sub></p>
+
 > **Source repository:** [github.com/boyloy21/Trailobot_Simulation](https://github.com/boyloy21/Trailobot_Simulation)
 > **Inspected version:** branch `main`, commit `54dcda2` (September 2026)
 > **License (repository):** MIT (repository `LICENSE`); individual `package.xml` files declare Apache-2.0

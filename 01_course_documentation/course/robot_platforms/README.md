@@ -2,6 +2,16 @@
 
 **Navigation:** [Course README](../README.md) · **Robot Platforms** · [Trailobot](trailobot_amr.md) · [ABB IRB 1200](abb_irb1200_manipulator.md) · [RB3-1200](rb3_1200_manipulator.md)
 
+<table>
+  <tr>
+    <td align="center"><img src="../../../assets/images/robots/trailobot_isometric.jpg" alt="Trailobot AMR, three-quarter view" height="180"></td>
+    <td align="center"><img src="../../../assets/images/robots/abb_irb1200.png" alt="ABB IRB 1200 industrial manipulator" height="180"></td>
+    <td align="center"><img src="../../../assets/images/robots/rb3_1200.png" alt="Rainbow Robotics RB3-1200 collaborative manipulator" height="180"></td>
+  </tr>
+</table>
+
+<p align="center"><sub>Trailobot AMR · ABB IRB 1200 · RB3-1200</sub></p>
+
 ---
 
 The course uses one mobile robot and two manipulators. The implementations live in their **original repositories**; this folder explains what each robot is, how the course uses it, and what has been verified.

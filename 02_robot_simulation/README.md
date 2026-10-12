@@ -2,6 +2,16 @@
 
 **Navigation:** [Repository README](../README.md) · **Robot Simulation** · [Trailobot](trailobot_amr/README.md) · [ABB IRB 1200](abb_irb1200/README.md) · [RB3-1200](rb3_1200/README.md)
 
+<table>
+  <tr>
+    <td align="center"><img src="../assets/images/robots/trailobot_isometric.jpg" alt="Trailobot AMR, three-quarter view" height="160"></td>
+    <td align="center"><img src="../assets/images/robots/abb_irb1200.png" alt="ABB IRB 1200 industrial manipulator" height="160"></td>
+    <td align="center"><img src="../assets/images/robots/rb3_1200.png" alt="Rainbow Robotics RB3-1200 collaborative manipulator" height="160"></td>
+  </tr>
+</table>
+
+<p align="center"><sub>Trailobot AMR · ABB IRB 1200 · RB3-1200</sub></p>
+
 ---
 
 This folder explains how to **obtain, inspect, and run** the simulation of each course robot. The robot code itself stays in its original repository, so it is maintained in one place and keeps its own license. These guides tell you which repository, branch, and commands to use, and what has been verified.
