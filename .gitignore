@@ -1,0 +1,23 @@
+# ROS 2 / colcon build outputs (if a workspace is created inside this repository)
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Files generated while following the labs
+frames_*.gv
+frames_*.pdf
+*.gv
